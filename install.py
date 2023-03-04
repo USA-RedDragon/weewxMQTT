@@ -4,56 +4,32 @@
 #
 # Configured by Bill to install weewxMQTT user driver, 2016.
 
-import os.path
-import configobj
+from weecfg.extension import ExtensionInstaller
 
-import setup
-import distutils
 
 def loader():
-    return weewxMQTTInstaller()
+    return MQTTInstaller()
 
-class weewxMQTTInstaller(setup.ExtensionInstaller):
-    _driver_conf_files = ['weewx.conf']
 
+class MQTTInstaller(ExtensionInstaller):
     def __init__(self):
-        super(weewxMQTTInstaller, self).__init__(
+        super(MQTTInstaller, self).__init__(
             version="0.2",
-            name='weewxMQTT',
+            name='mqtt',
             description='A weewx driver which subscribes to MQTT topics providing weewx compatible data',
             author="Bill Morrow",
             author_email="morrowwm@gmail.com",
+            files=[('bin/user', ['bin/user/mqtt.py'])],
             config={
-                'wxMesh': {
-                    driver = user.wxMesh
-                    host = localhost           # MQTT broker hostname
-                    topic = weather            # topic
-                    poll_interval = 1
-    
-                    [[label_map]]
-                    TIME = dateTime
-                    HUMT = outTemp
-                    RHUM = outHumidity
-                    INTE = inTemp
-                    INHU = inHumidity
-                    BARP = barometer
-                    IRRA = radiation
-                    PHOV = supplyVoltage
-                    BATV = consBatteryVoltage
-                    AMBT = extraTemp1
-                    SYST = extraTemp2
-                    WDIR = windDir
-                    WIND = windSpeed
-                 }
-
-            files=[('bin/users/wxMesh'])]
-            )
-
-        print ""
-        print "The following alternative languages are available:"
-        self.language = None
-
-    def merge_config_options(self):
-
-        fn = os.path.join(self.layout['CONFIG_ROOT'], 'weewx.conf')
-        config = configobj.ConfigObj(fn)
+                'mqtt': {
+                    'driver': 'user.mqtt',
+                    'host': 'localhost',           # MQTT broker hostname
+                    'topic': 'weather',            # topic
+                    'poll_interval': 1.0,          # seconds
+                    'username': '',                # MQTT broker username
+                    'password': '',                # MQTT broker password
+                    'timestamp_format': '%Y-%m-%d %H:%M:%S',             # date format
+                    'client_id': 'weeWXMQTT',      # MQTT client id
+                }
+            },
+        )
