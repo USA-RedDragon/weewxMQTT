@@ -178,7 +178,7 @@ class MQTTDriver(weewx.drivers.AbstractDevice):
                         )
                         .timetuple()
                     )
-                else:
+                elif "dateTime" not in data:
                     data["dateTime"] = time.mktime(
                         datetime.datetime.now(tz=datetime.timezone.utc).timetuple()
                     )
